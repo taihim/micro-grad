@@ -4,3 +4,5 @@ add pytorch like interface
 
 also make some example nns using it
 implement it in zig
+
+zig cli app
