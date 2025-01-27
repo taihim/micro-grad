@@ -1,3 +1,4 @@
+from typing import Union
 
 from src.utils import compare_float
 
@@ -16,12 +17,13 @@ class Value:
         """String representation of a Value object."""
         return f"Value(data={self.data})"
 
-    def __add__(self, other_value: "Value") -> "Value":
+    def __add__(self, other_value: Union["Value", float]) -> "Value":
         """Add two Value objects."""
+        other_value = other_value if isinstance(other_value, Value) else Value(other_value)
         return Value(self.data + other_value.data, (self, other_value), "+")
 
-    def __mul__(self, other_value: "Value") -> "Value":
-        """Multiply two Value objects."""
+    def __mul__(self, other_value: Union["Value", float]) -> "Value":
+        other_value = other_value if isinstance(other_value, Value) else Value(other_value)
         return Value(self.data * other_value.data, (self, other_value), "*")
 
     def __eq__(self, other_value: object) -> bool:
@@ -33,9 +35,3 @@ class Value:
     def __hash__(self) -> int:
         """Calculate and return the hash for a Value object."""
         return hash(self.data)
-
-
-# f = Value(3.3) + Value(1)
-# print(f)
-# print(f.prev)
-# print(f.op)

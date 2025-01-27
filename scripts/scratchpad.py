@@ -21,13 +21,13 @@ c = Value(10.0, label="c")
 d = a + b
 d.label = "d"
 
-e = d + Value(3, label="f")
+e = d + Value(3)
 e.label = "e"
 
 f = e * c
 f.label = "f"
 
-g = a + f
+g = f * b * a
 g.label = "g"
 
 visualize_graph(g, filename="viz1")
