@@ -2,6 +2,7 @@
 from src.utils import compare_float
 
 
+# todo: fix unhashable type error
 class Value:
     """Base Value class for micrograd."""
 
