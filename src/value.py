@@ -1,3 +1,6 @@
+from src.utils import compare_float
+
+
 class Value:
     """Base Value class for micrograd."""
 
@@ -14,4 +17,10 @@ class Value:
 
     def __mul__(self, other_value: "Value") -> "Value":
         """Multiply two Value objects."""
-        return Value(self.data + other_value.data)
+        return Value(self.data * other_value.data)
+
+    def __eq__(self, other_value: object) -> bool:
+        """Check equality of two Value objects."""
+        if not isinstance(other_value, Value):
+            raise NotImplementedError
+        return compare_float(self.data, other_value.data)
