@@ -1,52 +1,30 @@
+from pathlib import Path
+
 from graphviz import Digraph
+
 from src.value import Value
 
 
-def trace(root: Value) -> tuple[set[Value], set[tuple[Value, Value]]]:
-    """Build and return two sets of all the nodes and edges in a graph."""
-    nodes, edges = set(), set()
+def visualize_graph(
+    root: Value, filename: str = "viz", output_format: str = "png", path: Path = Path("./visualizations")
+) -> None:
+    """Generate a graph visualization and store the result in the path specified."""
+    graph = Digraph(name="visualization", filename=filename, format=output_format, graph_attr={"rankdir": "LR"})
 
-    def build(v: Value) -> None:
-        if v not in nodes:
-            nodes.add(v)
-            for child in v.prev:
-                edges.add((child, v))
-                build(child)
+    stack = [(root, "")]
 
-    build(root)
-    return nodes, edges
+    while stack:
+        node = stack.pop()
+        edges = []
+        graph.node(name=str(id(node[0])), label=f"{{{node[0].label} | Value: {node[0].data:.4f}}}", shape="record")
+        if node[1]:
+            graph.edge(str(id(node[0])), node[1])
+        if node[0].op:
+            graph.node(name=str(id(node[0])) + node[0].op, label=node[0].op)
+            graph.edge(str(id(node[0])) + node[0].op, str(id(node[0])))
 
+            edges = [(child, str(id(node[0])) + node[0].op) for child in node[0].prev]
 
-def draw_dot(root: Value) -> Digraph:
-    """Draw a visualization for the given graph using graphviz."""
-    dot = Digraph(format="png", graph_attr={"rankdir": "LR"})
+        stack.extend(edges)
 
-    nodes, edges = trace(root)
-
-    for n in nodes:
-        uid = str(id(n))
-
-        dot.node(name=uid, label=f"{{{n.label} | data {n.data:.4f}}}", shape="record")
-
-        if n.op:
-            # if this value is the result of an operation, create an op node for it
-            dot.node(name=uid + n.op, label=n.op)
-            dot.edge(uid + n.op, uid)
-
-    for n1, n2 in edges:
-        # connect n1 to the op node of n2
-        dot.edge(str(id(n1)), str(id(n2)) + n2.op)
-
-    return dot
-
-
-a = Value(2.0, label="a")
-b = Value(-3.0, label="b")
-c = Value(10.0, label="c")
-e = a * b
-e.label = "e"
-d = e * c
-d.label = "d"
-
-dot1 = draw_dot(d)
-dot1.render(directory="./images")
+    graph.render(directory=path)
