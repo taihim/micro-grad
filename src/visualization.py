@@ -20,7 +20,7 @@ def trace(root: Value) -> tuple[set[Value], set[tuple[Value, Value]]]:
 
 def draw_dot(root: Value) -> Digraph:
     """Draw a visualization for the given graph using graphviz."""
-    dot = Digraph(format="svg", graph_attr={"rank_dir": "LR"})
+    dot = Digraph(format="png", graph_attr={"rankdir": "LR"})
 
     nodes, edges = trace(root)
 
@@ -49,4 +49,5 @@ e.label = "e"
 d = e * c
 d.label = "d"
 
-draw_dot(d)
+dot1 = draw_dot(d)
+dot1.render(directory="./images")

@@ -29,3 +29,13 @@ class Value:
         if not isinstance(other_value, Value):
             raise NotImplementedError
         return compare_float(self.data, other_value.data)
+
+    def __hash__(self) -> int:
+        """Calculate and return the hash for a Value object."""
+        return hash(self.data)
+
+
+f = Value(3.3) + Value(1)
+print(f)
+print(f.prev)
+print(f.op)
