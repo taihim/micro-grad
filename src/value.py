@@ -35,7 +35,7 @@ class Value:
         return hash(self.data)
 
 
-f = Value(3.3) + Value(1)
-print(f)
-print(f.prev)
-print(f.op)
+# f = Value(3.3) + Value(1)
+# print(f)
+# print(f.prev)
+# print(f.op)
