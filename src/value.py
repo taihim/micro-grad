@@ -23,6 +23,7 @@ class Value:
         return Value(self.data + other_value.data, (self, other_value), "+")
 
     def __mul__(self, other_value: Union["Value", float]) -> "Value":
+        """Multiply two Value objects."""
         other_value = other_value if isinstance(other_value, Value) else Value(other_value)
         return Value(self.data * other_value.data, (self, other_value), "*")
 
