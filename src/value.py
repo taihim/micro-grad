@@ -25,12 +25,12 @@ class Value:
         other_value = other_value if isinstance(other_value, Value) else Value(other_value)
         out = Value(self.data + other_value.data, (self, other_value), "+")
 
-        def backward() -> None:
+        def _backward() -> None:
             # chain rule
             self.grad = 1 * out.grad
             other_value.grad = 1 * out.grad
 
-        self._backward = backward
+        self._backward = _backward
 
         return out
 
@@ -39,12 +39,12 @@ class Value:
         other_value = other_value if isinstance(other_value, Value) else Value(other_value)
         out = Value(self.data * other_value.data, (self, other_value), "*")
 
-        def backward() -> None:
+        def _backward() -> None:
             # chain rule
             self.grad = other_value.data * out.grad
             other_value.grad = self.data * out.grad
 
-        self._backward = backward
+        self._backward = _backward
 
         return out
 
@@ -54,13 +54,16 @@ class Value:
         t = (exp(2 * x) - 1) / (exp(2 * x) + 1)
         out = Value(t, (self,), "tanh")
 
-        def backward() -> None:
+        def _backward() -> None:
             # chain rule
             self.grad = (1 - t**2) * out.grad  # derivative of tanh(x) is 1-tanh(x)^2 and we already have tanh(x) i.e. t
 
-        self._backward = backward
+        self._backward = _backward
 
         return out
+
+    def backward(self) -> None:
+        """Perform a backward pass through the Value object and all its children."""
 
     def __eq__(self, other_value: object) -> bool:
         """Check equality of two Value objects."""
