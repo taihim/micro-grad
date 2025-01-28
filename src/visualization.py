@@ -16,7 +16,11 @@ def visualize_graph(
     while stack:
         node = stack.pop()
         edges = []
-        graph.node(name=str(id(node[0])), label=f"{{{node[0].label} | Value: {node[0].data:.4f}}}", shape="record")
+        graph.node(
+            name=str(id(node[0])),
+            label=f"{{{node[0].label} | Val: {node[0].data:.4f} | Grad: {node[0].grad:.4f}}}",
+            shape="record",
+        )
         if node[1]:
             graph.edge(str(id(node[0])), node[1])
         if node[0].op:

@@ -14,20 +14,25 @@ from src import Value, visualize_graph
 
 
 
+h = 0.01
+
 a = Value(2.0, label="a")
 b = Value(-3.0, label="b")
 c = Value(10.0, label="c")
+e = a * b; e.label = "e"
+d = e + c; d.label = "d"
+f = Value(-2, label="f")
+L = d * f; L.label = "L"
+L.grad = 1.0
 
-d = a + b
-d.label = "d"
+L._backward()
+f._backward()
+d._backward()
+e._backward()
+c._backward()
+a._backward()
+b._backward()
 
-e = d + Value(3)
-e.label = "e"
 
-f = e * c
-f.label = "f"
 
-g = f * b * a
-g.label = "g"
-
-visualize_graph(g, filename="viz1")
+visualize_graph(L, filename="viz1")
