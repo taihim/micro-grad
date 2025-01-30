@@ -9,3 +9,5 @@ zig cli app
 
 add tests for all code
 also add ci/cd
+
+add comparison to pytorch as well
