@@ -38,6 +38,10 @@ class Value:
 
         return result
 
+    def __radd__(self, other_value: Union["Value", float]) -> "Value":
+        """Implement radd for Value objects."""
+        return self + other_value
+
     def __mul__(self, other_value: Union["Value", float]) -> "Value":
         """Multiply two Value objects."""
         other_value = other_value if isinstance(other_value, Value) else Value(other_value)
@@ -54,6 +58,10 @@ class Value:
         result._backward = _backward
 
         return result
+
+    def __rmul__(self, other_value: Union["Value", float]) -> "Value":  # invoked when we do 2*Value instead of Value*2
+        """Implement rmul for Value objects."""
+        return self * other_value
 
     def tanh(self) -> "Value":
         """Apply tanh to the Value object's data."""
