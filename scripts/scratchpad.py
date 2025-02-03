@@ -42,9 +42,16 @@ from src import Value, visualize_graph
 
 
 # repeated value backprop. to check for a bug. add these cases as unit tests
-a = Value(3.0, label="a") # grad should be 2 because db/da of a + a = 1 + 1 => 2
-b = a + a; b.label = "b"
-b.backward()
-visualize_graph(b, filename="repeated")
+# a = Value(3.0, label="a") # grad should be 2 because db/da of a + a = 1 + 1 => 2
+# b = a + a; b.label = "b"
+# b.backward()
+# visualize_graph(b, filename="repeated")
 
 # repeated value
+a = Value(-2, label="a")
+b = Value(3, label="b")
+d = a * b; d.label="d"
+e = a + b; e.label="e"
+f = d * e; f.label="f"
+f.backward()
+visualize_graph(f, filename="repeated3")
