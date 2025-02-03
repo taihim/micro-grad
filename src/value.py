@@ -4,7 +4,6 @@ from typing import Union
 from src.utils import compare_float
 
 
-# todo: fix unhashable type error
 class Value:
     """Base Value class for micrograd."""
 
@@ -23,30 +22,30 @@ class Value:
     def __add__(self, other_value: Union["Value", float]) -> "Value":
         """Add two Value objects."""
         other_value = other_value if isinstance(other_value, Value) else Value(other_value)
-        out = Value(self.data + other_value.data, (self, other_value), "+")
+        result = Value(self.data + other_value.data, (self, other_value), "+")
 
         def _backward() -> None:
             # chain rule
-            self.grad = 1 * out.grad
-            other_value.grad = 1 * out.grad
+            self.grad = 1 * result.grad
+            other_value.grad = 1 * result.grad
 
         self._backward = _backward
 
-        return out
+        return result
 
     def __mul__(self, other_value: Union["Value", float]) -> "Value":
         """Multiply two Value objects."""
         other_value = other_value if isinstance(other_value, Value) else Value(other_value)
-        out = Value(self.data * other_value.data, (self, other_value), "*")
+        result = Value(self.data * other_value.data, (self, other_value), "*")
 
         def _backward() -> None:
             # chain rule
-            self.grad = other_value.data * out.grad
-            other_value.grad = self.data * out.grad
+            self.grad = other_value.data * result.grad
+            other_value.grad = self.data * result.grad
 
         self._backward = _backward
 
-        return out
+        return result
 
     def tanh(self) -> "Value":
         """Apply tanh to the Value object's data."""
@@ -64,6 +63,14 @@ class Value:
 
     def backward(self) -> None:
         """Perform a backward pass through the Value object and all its children."""
+        self.grad = 1.0
+        self._backward()  # type: ignore[no-untyped-call]
+        stack = [self]
+        while stack:
+            node = stack.pop()
+            if node.prev:
+                stack.extend(node.prev)
+            node._backward()  # type: ignore[no-untyped-call]  # noqa: SLF001
 
     def __eq__(self, other_value: object) -> bool:
         """Check equality of two Value objects."""

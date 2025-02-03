@@ -23,16 +23,12 @@ e = a * b; e.label = "e"
 d = e + c; d.label = "d"
 f = Value(-2, label="f")
 L = d * f; L.label = "L"
-L.grad = 1.0
+# L.grad = 1.0
 
-L._backward()
-f._backward()
-d._backward()
-e._backward()
-c._backward()
-a._backward()
-b._backward()
+L.backward()
 
 
 
-visualize_graph(L, filename="viz1")
+
+
+visualize_graph(L, filename="viz3")
