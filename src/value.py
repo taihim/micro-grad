@@ -63,6 +63,18 @@ class Value:
         """Implement rmul for Value objects."""
         return self * other_value
 
+    def exp(self) -> "Value":
+        """Exponentiate the data attribute of the Value object."""
+        x = self.data
+        result = Value(exp(x), (self,), label="exp")
+
+        def _backward() -> None:
+            self.grad += result.data * result.grad
+
+        self._backward = _backward
+
+        return result
+
     def tanh(self) -> "Value":
         """Apply tanh to the Value object's data."""
         x = self.data
