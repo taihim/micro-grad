@@ -13,7 +13,7 @@ class Value:
         self.label = label
         self.prev = set(_children)
         self.op = _op
-        self._backward = lambda: print(f"Running empty backward function for {self.label}")
+        self._backward = lambda: None
 
     def __repr__(self) -> str:
         """String representation of a Value object."""
@@ -25,14 +25,11 @@ class Value:
         result = Value(self.data + other_value.data, (self, other_value), "+")
 
         def _backward() -> None:
-            print(f"Calling addition backward for {self.label}")
             # chain rule
             # we use += to accumulate the gradients for when a Value is used multiple times in the expression graph
             self.grad += 1 * result.grad
             other_value.grad += 1 * result.grad
 
-            print(self.label, self.grad)
-            print(other_value.label, other_value.grad)
 
         result._backward = _backward
 
@@ -48,12 +45,9 @@ class Value:
         result = Value(self.data * other_value.data, (self, other_value), "*")
 
         def _backward() -> None:
-            print(f"Calling mul backward for {self.label}")
             # chain rule
             self.grad += other_value.data * result.grad
             other_value.grad += self.data * result.grad
-            print(self.label, self.grad)
-            print(other_value.label, other_value.grad)
 
         result._backward = _backward
 
@@ -95,9 +89,7 @@ class Value:
         """Perform a backward pass through the Value object and all its children."""
         self.grad = 1.0
         stack = [self]
-        print(f"Starting backprop from {self.label}")
         while stack:
-            print(f"Backprop stack: {[s.label for s in stack]}")
             node = stack.pop(0)
             if node.prev:
                 stack.extend(node.prev)

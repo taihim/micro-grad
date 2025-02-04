@@ -12,19 +12,28 @@ def test_value_addition() -> None:
     v2 = Value(2.2)
     
     assert v1 + v2 == Value(data=3.4)
+
+def test_value_radd() -> None:
+    v1 = Value(1.2)
+    assert 2.2 + v1 == Value(data=3.4)
+
     
 def test_value_multiplication() -> None:
     v1 = Value(3.5)
     v2 = Value(2)
-    print(v1*v2)
     assert v1 * v2 == Value(data=7)
+
+def test_value_rmul() -> None:
+    v1 = Value(3.5)
+    assert 2 * v1 == Value(data=7)
+
     
 def test_value_expression() -> None:
     a = Value(2.0)
     b = Value(-3.0)
     c = Value(10.0)
     
-    assert a*b + c == Value(data=4)
+    assert a * b + c == Value(data=4)
     
 def test_value_exp() -> None:
     a = Value(2.0)
