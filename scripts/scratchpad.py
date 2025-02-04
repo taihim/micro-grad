@@ -61,3 +61,6 @@ print(1 + Value(3))
 
 print(Value(3.2) * 2)
 print(2 * Value(3.2))
+
+# create test for this
+print(Value(2).exp())
