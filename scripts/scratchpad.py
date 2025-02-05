@@ -47,19 +47,50 @@ from src import Value, visualize_graph
 # visualize_graph(b, filename="repeated")
 
 # repeated value
-a = Value(-2, label="a")
-b = Value(3, label="b")
-d = a * b; d.label="d"
-e = a + b; e.label="e"
-f = d * e; f.label="f"
-f.backward()
-visualize_graph(f, filename="repeated3")
+# a = Value(-2, label="a")
+# b = Value(3, label="b")
+# d = a * b; d.label="d"
+# e = a + b; e.label="e"
+# f = d * e; f.label="f"
+# f.backward()
+# visualize_graph(f, filename="repeated3")
 
-print(Value(2) + 1)
-print(1 + Value(3))
+# print(Value(2) + 1)
+# print(1 + Value(3))
 
-print(Value(3.2) * 2)
-print(2 * Value(3.2))
+# print(Value(3.2) * 2)
+# print(2 * Value(3.2))
 
-# create test for this
-print(Value(2).exp())
+# # create test for this
+# print(Value(2).exp())
+
+
+# # simple 2-input neuron visualization
+x1 = Value(2.0, label="x1") 
+x2 = Value(0, label="x2")
+
+# weights for inputs
+w1 = Value(-3.0, label="w1")
+w2 = Value(1.0, label="w2")
+
+# bias 
+b = Value(6.8813735870195432, label="b")
+
+x1w1 = x1 * w1; x1w1.label = "x1*w1"
+x2w2 = x2 * w2; x2w2.label = "x2*w2"
+
+x1w1x2w2 = x1w1 + x2w2; x1w1x2w2.label = "x1*w1 + x2*w2"
+n = x1w1x2w2 + b; n.label="n"
+ 
+e = (2*n).exp()
+e.label = "e"
+
+o = (e - 1) / (e + 1)
+o.label="o"
+
+o.backward()
+
+print(o.prev)
+
+
+visualize_graph(o, filename="neuron2")

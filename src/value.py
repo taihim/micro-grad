@@ -1,4 +1,4 @@
-from math import exp
+import math
 from typing import Union
 
 from src.utils import compare_float
@@ -7,17 +7,17 @@ from src.utils import compare_float
 class Value:
     """Base Value class for micrograd."""
 
-    def __init__(self, data: float, _children: tuple["Value", ...] = (), _op: str = "", label: str = "") -> None:
+    def __init__(self, data: float, _children: tuple["Value", ...] = (), op: str = "", label: str = "") -> None:
         self.data = data
         self.grad = 0.0
         self.label = label
         self.prev = set(_children)
-        self.op = _op
-        self._backward = lambda: None
+        self.op = op
+        self._backward = lambda: print(f"running empty backward for {self, self.label}")
 
     def __repr__(self) -> str:
         """String representation of a Value object."""
-        return f"Value(data={self.data})"
+        return f"Value(data={self.data} grad={self.grad})"
 
     def __add__(self, other_value: Union["Value", float]) -> "Value":
         """Add two Value objects."""
@@ -25,10 +25,12 @@ class Value:
         result = Value(self.data + other_value.data, (self, other_value), "+")
 
         def _backward() -> None:
+            print(f"running + backward for {self}")
             # chain rule
             # we use += to accumulate the gradients for when a Value is used multiple times in the expression graph
             self.grad += 1 * result.grad
             other_value.grad += 1 * result.grad
+            print(f"values: {self, other_value}")
 
 
         result._backward = _backward
@@ -45,14 +47,10 @@ class Value:
 
     def __sub__(self, other_value: Union["Value", float]) -> "Value":
         """Subtract a Value object from another."""
-        other_value = other_value if isinstance(other_value, Value) else Value(other_value)
-
         return self + (-other_value)
 
     def __rsub__(self, other_value: Union["Value", float]) -> "Value":
         """Implement rsub for Value objects."""
-        other_value = other_value if isinstance(other_value, Value) else Value(other_value)
-
         return other_value + (-self)
 
     def __mul__(self, other_value: Union["Value", float]) -> "Value":
@@ -61,9 +59,11 @@ class Value:
         result = Value(self.data * other_value.data, (self, other_value), "*")
 
         def _backward() -> None:
+            print(f"running x backward for {self}")
             # chain rule
             self.grad += other_value.data * result.grad
             other_value.grad += self.data * result.grad
+            print(f"values: {self, other_value}")
 
         result._backward = _backward
 
@@ -75,41 +75,44 @@ class Value:
 
     def __truediv__(self, other_value: Union["Value", float]) -> "Value":
         """Divide a Value by another Value."""
-        other_value = other_value if isinstance(other_value, Value) else Value(other_value)
-
-        return Value(self.data * (other_value.data**-1))
+        return self * (other_value**-1)
 
     def __pow__(self, power: float) -> "Value":
         """Raise a value to an numerical power."""
         x = self.data
-        result = Value(x**power, (self,), label=f"**{power}")
+        result = Value(x**power, (self,), f"**{power}")
 
         def _backward() -> None:
-            self.grad += (power * (x**power - 1)) * result.grad
+            print(f"running pow backward for {self}")
+            self.grad += (power * (x ** (power - 1))) * result.grad
 
-        self._backward = _backward
+        result._backward = _backward
 
         return result
 
     def exp(self) -> "Value":
         """Exponentiate the data attribute of the Value object."""
         x = self.data
-        result = Value(exp(x), (self,), label="exp")
+        result = Value(math.exp(x), (self,), "exp")
 
         def _backward() -> None:
+            print(f"Running backward exp for {self}")
             self.grad += result.data * result.grad
+            print(f"values: {self}")
 
-        self._backward = _backward
+        result._backward = _backward  # noqa: SLF001
 
         return result
 
     def tanh(self) -> "Value":
         """Apply tanh to the Value object's data."""
         x = self.data
-        t = (exp(2 * x) - 1) / (exp(2 * x) + 1)
+        t = (math.exp(2 * x) - 1) / (math.exp(2 * x) + 1)
         result = Value(t, (self,), "tanh")
 
         def _backward() -> None:
+            print(f"Running backward tanh for {self}")
+
             # chain rule
             self.grad += (
                 1 - t**2
@@ -125,8 +128,13 @@ class Value:
         stack = [self]
         while stack:
             node = stack.pop(0)
+            print("Main backward for", node, node.label)
+
             if node.prev:
-                stack.extend(node.prev)
+                for child in node.prev:
+                    if child not in stack:
+                        stack.append(child)
+            print(f"current stack: {stack}")
             node._backward()  # type: ignore[no-untyped-call]  # noqa: SLF001
 
     def __eq__(self, other_value: object) -> bool:
