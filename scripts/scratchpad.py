@@ -86,6 +86,7 @@ e = (2*n).exp()
 e.label = "e"
 
 o = (e - 1) / (e + 1)
+# o = n.tanh()
 o.label="o"
 
 o.backward()
