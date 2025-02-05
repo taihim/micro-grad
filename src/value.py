@@ -57,6 +57,24 @@ class Value:
         """Implement rmul for Value objects."""
         return self * other_value
 
+    def __truediv__(self, other_value: Union["Value", float]) -> "Value":
+        """Divide a Value by another Value."""
+        other_value = other_value if isinstance(other_value, Value) else Value(other_value)
+
+        return Value(self.data * (other_value.data**-1))
+
+    def __pow__(self, power: float) -> "Value":
+        """Raise a value to an numerical power."""
+        x = self.data
+        result = Value(x**power, (self,), label=f"**{power}")
+
+        def _backward() -> None:
+            self.grad += (power * (x**power - 1)) * result.grad
+
+        self._backward = _backward
+
+        return result
+
     def exp(self) -> "Value":
         """Exponentiate the data attribute of the Value object."""
         x = self.data
