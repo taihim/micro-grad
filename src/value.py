@@ -39,6 +39,22 @@ class Value:
         """Implement radd for Value objects."""
         return self + other_value
 
+    def __neg__(self) -> "Value":
+        """Negate the Value object."""
+        return self * -1
+
+    def __sub__(self, other_value: Union["Value", float]) -> "Value":
+        """Subtract a Value object from another."""
+        other_value = other_value if isinstance(other_value, Value) else Value(other_value)
+
+        return self + (-other_value)
+
+    def __rsub__(self, other_value: Union["Value", float]) -> "Value":
+        """Implement rsub for Value objects."""
+        other_value = other_value if isinstance(other_value, Value) else Value(other_value)
+
+        return other_value + (-self)
+
     def __mul__(self, other_value: Union["Value", float]) -> "Value":
         """Multiply two Value objects."""
         other_value = other_value if isinstance(other_value, Value) else Value(other_value)

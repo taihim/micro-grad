@@ -18,6 +18,20 @@ def test_value_radd() -> None:
     v1 = Value(1.2)
     assert 2.2 + v1 == Value(data=3.4)
 
+
+def test_value_sub() -> None:
+    v1 = Value(1.2)
+    v2 = Value(2.2)
+    
+    assert v1 - v2 == Value(data=-1.0) 
+
+
+def test_value_rsub() -> None:
+    v1 = Value(1.2)
+    res = 2 - v1
+    
+    assert res == Value(data=0.8) 
+
     
 def test_value_multiplication() -> None:
     v1 = Value(3.5)
