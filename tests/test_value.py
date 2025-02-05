@@ -13,6 +13,7 @@ def test_value_addition() -> None:
     
     assert v1 + v2 == Value(data=3.4)
 
+
 def test_value_radd() -> None:
     v1 = Value(1.2)
     assert 2.2 + v1 == Value(data=3.4)
@@ -22,6 +23,7 @@ def test_value_multiplication() -> None:
     v1 = Value(3.5)
     v2 = Value(2)
     assert v1 * v2 == Value(data=7)
+
 
 def test_value_rmul() -> None:
     v1 = Value(3.5)
@@ -35,9 +37,40 @@ def test_value_expression() -> None:
     
     assert a * b + c == Value(data=4)
     
+
 def test_value_exp() -> None:
     a = Value(2.0)
     b = Value(-3.1)
     
     assert compare_float(a.exp().data, 7.38905609) 
     assert compare_float(b.exp().data, 0.04504920)
+    
+
+def test_value_pow() -> None:
+    a = Value(2.0) ** 2
+    b = Value(-3.5) ** 3
+    
+    assert compare_float(a.data, 4) 
+    assert compare_float(b.data, -42.875)
+    
+
+
+def test_value_tanh() -> None:
+    a = Value(2.1)
+    b = Value(-3.12)
+    
+    assert compare_float(a.tanh().data, 0.970451) 
+    assert compare_float(b.tanh().data, -0.996107)
+
+
+def test_value_div() -> None:
+    a = Value(22.0)
+    assert (a / 2).data == 11.0
+    assert (a / -11).data == -2.0
+    
+
+def test_value_eq() -> None:
+    a = Value(2.1)
+    b = Value(2.1) 
+    
+    assert a == b

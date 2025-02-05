@@ -1,4 +1,3 @@
-import matplotlib.pyplot as plt
 import numpy as np
 from src import Value, visualize_graph
 
@@ -48,13 +47,13 @@ from src import Value, visualize_graph
 # visualize_graph(b, filename="repeated")
 
 # repeated value
-# a = Value(-2, label="a")
-# b = Value(3, label="b")
-# d = a * b; d.label="d"
-# e = a + b; e.label="e"
-# f = d * e; f.label="f"
-# f.backward()
-# visualize_graph(f, filename="repeated3")
+a = Value(-2, label="a")
+b = Value(3, label="b")
+d = a * b; d.label="d"
+e = a + b; e.label="e"
+f = d * e; f.label="f"
+f.backward()
+visualize_graph(f, filename="repeated3")
 
 print(Value(2) + 1)
 print(1 + Value(3))
