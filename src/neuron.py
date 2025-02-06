@@ -3,7 +3,20 @@ import random
 from src.value import Value
 
 
-class Neuron:
+class Module:
+    """Base Module class."""
+
+    def parameters(self) -> list[Value]:
+        """Return all parameters for the object."""
+        return []
+
+    def zero_grad(self) -> None:
+        """Reset gradients of all parameters."""
+        for param in self.parameters():
+            param.grad = 0.0
+
+
+class Neuron(Module):
     """Base Neuron class for micrograd."""
 
     # todo add sigmoid/relu non linearity
@@ -29,7 +42,7 @@ class Neuron:
         return [self.b, *self.w]
 
 
-class Layer:
+class Layer(Module):
     """Base Layer class for micrograd."""
 
     def __init__(self, n_in: int, n_out: int) -> None:
@@ -48,7 +61,7 @@ class Layer:
         return [params for neuron in self.neurons for params in neuron.parameters()]
 
 
-class MLP:
+class MLP(Module):
     """MLP class for micrograd."""
 
     def __init__(self, input_len: int, layer_dims: list[int]) -> None:

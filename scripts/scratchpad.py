@@ -132,34 +132,31 @@ from src.neuron import Neuron, Layer, MLP
 
 # print(out_mlp)
 
-lr = 0.01
-m1 = MLP(3, [4, 4, 1])
+lr = 0.005
+m1 = MLP(3, [4, 8, 1])
 xs = [[2, 3, -1], [3, -1, .5], [0.5, 1, 1], [1, 1, -1]]
-y = [1, -1, -1, 1]
+y = [1, 0, 0, -1]
 
-y_pred = [m1(x) for x in xs]
+training_steps = 1000
+
+for _ in range(training_steps):
+    
+    y_pred = [m1(x) for x in xs]    
+
+    # mean squared error
+    loss = sum((yout - ygt)**2 for yout, ygt in zip(y_pred, y))
+    
+    # reset gradients before backward
+    m1.zero_grad()
+    
+    
+    loss.backward()
+
+    # update params    
+    for param in m1.parameters():
+        param.data += -lr * param.grad
+    print(loss.data)
+
 print(y_pred)
-
-# mean squared error
-loss = sum((yout - ygt)**2 for yout, ygt in zip(y_pred, y))
-print(loss)
-
-# reset gradients before backward
-for param in m1.parameters():
-    param.grad = 0.0
-
-loss.backward()
-# print(len(m1.parameters()))
-
-# print(m1.layers[0].neurons[0].w[0].data)
-# print(m1.layers[0].neurons[0].w[0].grad)
-
-for param in m1.parameters():
-    param.data += -lr * param.grad
-
-y_pred = [m1(x) for x in xs]
-loss = sum((yout - ygt)**2 for yout, ygt in zip(y_pred, y))
-print(loss)
-
 
 # visualize_graph(loss, "loss")
