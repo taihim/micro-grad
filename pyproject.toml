@@ -2,7 +2,7 @@
 name = "micro-grad"
 version = "0.1.0"
 description = "Default template for PDM package"
-dependencies = ["numpy>=2.2.2", "matplotlib>=3.10.0", "graphviz>=0.20.3"]
+dependencies = ["numpy>=2.2.2", "matplotlib>=3.10.0", "graphviz>=0.20.3", "scikit-learn>=1.6.1"]
 requires-python = "==3.12.*"
 readme = "README.md"
 packages = ["src", "tests"]

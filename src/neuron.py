@@ -1,4 +1,5 @@
 import random
+from typing import Any
 
 from src.value import Value
 
@@ -22,7 +23,7 @@ class Neuron(Module):
     # todo add sigmoid/relu non linearity
     def __init__(self, n_in: int, non_lin: bool = True) -> None:
         self.w = [Value(random.uniform(-1, 1)) for _ in range(n_in)]  # noqa: S311
-        self.b = Value(random.uniform(-1, 1))  # noqa: S311
+        self.b = Value(0)
         self.non_lin = non_lin
 
     def __call__(self, x: list[int | Value]) -> Value:
@@ -31,7 +32,7 @@ class Neuron(Module):
             raise ValueError(f"Expected input of length {len(self.w)}, got {len(x)}.")
 
         activation = sum((xi * wi for xi, wi in zip(self.w, x, strict=False)), self.b)
-        return activation.tanh() if self.non_lin else activation
+        return activation.relu() if self.non_lin else activation
 
     def __repr__(self) -> str:
         """__repr__ implementation for Neuron objects."""
@@ -45,8 +46,8 @@ class Neuron(Module):
 class Layer(Module):
     """Base Layer class for micrograd."""
 
-    def __init__(self, n_in: int, n_out: int) -> None:
-        self.neurons = [Neuron(n_in) for _ in range(n_out)]
+    def __init__(self, n_in: int, n_out: int, **kwargs: Any) -> None:
+        self.neurons = [Neuron(n_in, **kwargs) for _ in range(n_out)]
 
     def __call__(self, x: list[int | Value]) -> list[int | Value]:
         """__call__ implementation for Layer objects."""
@@ -66,7 +67,9 @@ class MLP(Module):
 
     def __init__(self, input_len: int, layer_dims: list[int]) -> None:
         mlp_dims = [input_len, *layer_dims]
-        self.layers = [Layer(mlp_dims[i], mlp_dims[i + 1]) for i in range(len(layer_dims))]
+        self.layers = [
+            Layer(mlp_dims[i], mlp_dims[i + 1], non_lin=i != len(layer_dims) - 1) for i in range(len(layer_dims))
+        ]
 
     def __call__(self, x: list[int | Value]) -> int | Value | list[int | Value]:
         """__call__ implementation for Layer objects."""

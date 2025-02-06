@@ -122,19 +122,38 @@ class Value:
 
         return result
 
+    def relu(self) -> "Value":
+        """Apply relu to the Value object's data."""
+        x = self.data
+        t = max(x, 0)
+        result = Value(t, (self,), "relu")
+
+        def _backward() -> None:
+            # print(f"Running backward relu for {self}")
+
+            # chain rule
+            self.grad += (result.data > 0) * result.grad
+
+        result._backward = _backward  # noqa: SLF001
+
+        return result
+
     def backward(self) -> None:
         """Perform a backward pass through the Value object and all its children."""
         self.grad = 1.0
-        stack = [self]
-        while stack:
-            node = stack.pop(0)
-            # print("Main backward for", node, node.label)
+        visited = set()
+        topo = []
 
-            if node.prev:
+        def build_topo(node: "Value") -> None:
+            if node not in visited:
+                visited.add(node)
                 for child in node.prev:
-                    if child not in stack:
-                        stack.append(child)
-            # print(f"current stack: {stack}")
+                    build_topo(child)
+                topo.append(node)
+
+        build_topo(self)
+
+        for node in reversed(topo):
             node._backward()  # type: ignore[no-untyped-call]  # noqa: SLF001
 
     def __eq__(self, other_value: object) -> bool:
@@ -145,4 +164,4 @@ class Value:
 
     def __hash__(self) -> int:
         """Calculate and return the hash for a Value object."""
-        return hash(self.data)
+        return hash((self.data, id(self)))
