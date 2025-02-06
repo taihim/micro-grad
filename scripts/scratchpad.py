@@ -135,12 +135,12 @@ from src.neuron import Neuron, Layer, MLP
 
 
 
-# lr = 0.03
+# lr = 0.001
 # m1 = MLP(3, [4, 4, 1])
 # xs = [[2, 3, -1], [3, -1, .5], [0.5, 1, 1], [1, 1, -1]]
-# y = [0, 1, 1, -1]
+# y = [4, 1, 1, -2]
 
-# training_steps = 10000
+# training_steps = 2000
 
 # for _ in range(training_steps):
     
