@@ -13,7 +13,8 @@ class Value:
         self.label = label
         self.prev = set(_children)
         self.op = op
-        self._backward = lambda: print(f"running empty backward for {self, self.label}")
+        # self._backward = lambda: print(f"running empty backward for {self, self.label}")
+        self._backward = lambda: None
 
     def __repr__(self) -> str:
         """String representation of a Value object."""
@@ -25,13 +26,12 @@ class Value:
         result = Value(self.data + other_value.data, (self, other_value), "+")
 
         def _backward() -> None:
-            print(f"running + backward for {self}")
+            # print(f"running + backward for {self}")
             # chain rule
             # we use += to accumulate the gradients for when a Value is used multiple times in the expression graph
             self.grad += 1 * result.grad
             other_value.grad += 1 * result.grad
-            print(f"values: {self, other_value}")
-
+            # print(f"values: {self, other_value}")
 
         result._backward = _backward
 
@@ -59,11 +59,11 @@ class Value:
         result = Value(self.data * other_value.data, (self, other_value), "*")
 
         def _backward() -> None:
-            print(f"running x backward for {self}")
+            # print(f"running x backward for {self}")
             # chain rule
             self.grad += other_value.data * result.grad
             other_value.grad += self.data * result.grad
-            print(f"values: {self, other_value}")
+            # print(f"values: {self, other_value}")
 
         result._backward = _backward
 
@@ -83,7 +83,7 @@ class Value:
         result = Value(x**power, (self,), f"**{power}")
 
         def _backward() -> None:
-            print(f"running pow backward for {self}")
+            # print(f"running pow backward for {self}")
             self.grad += (power * (x ** (power - 1))) * result.grad
 
         result._backward = _backward
@@ -96,9 +96,9 @@ class Value:
         result = Value(math.exp(x), (self,), "exp")
 
         def _backward() -> None:
-            print(f"Running backward exp for {self}")
+            # print(f"Running backward exp for {self}")
             self.grad += result.data * result.grad
-            print(f"values: {self}")
+            # print(f"values: {self}")
 
         result._backward = _backward  # noqa: SLF001
 
@@ -111,7 +111,7 @@ class Value:
         result = Value(t, (self,), "tanh")
 
         def _backward() -> None:
-            print(f"Running backward tanh for {self}")
+            # print(f"Running backward tanh for {self}")
 
             # chain rule
             self.grad += (
@@ -128,13 +128,13 @@ class Value:
         stack = [self]
         while stack:
             node = stack.pop(0)
-            print("Main backward for", node, node.label)
+            # print("Main backward for", node, node.label)
 
             if node.prev:
                 for child in node.prev:
                     if child not in stack:
                         stack.append(child)
-            print(f"current stack: {stack}")
+            # print(f"current stack: {stack}")
             node._backward()  # type: ignore[no-untyped-call]  # noqa: SLF001
 
     def __eq__(self, other_value: object) -> bool:
