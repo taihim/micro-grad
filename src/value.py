@@ -164,4 +164,4 @@ class Value:
 
     def __hash__(self) -> int:
         """Calculate and return the hash for a Value object."""
-        return hash((self.data, id(self)))
+        return hash(id(self))
