@@ -13,3 +13,6 @@ also add ci/cd
 add comparison to pytorch as well
 
 add backward function for backprop from root node
+
+
+add some nn's 

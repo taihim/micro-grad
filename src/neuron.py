@@ -6,9 +6,11 @@ from src.value import Value
 class Neuron:
     """Base Neuron class for micrograd."""
 
-    def __init__(self, n_in: int) -> None:
+    # todo add sigmoid/relu non linearity
+    def __init__(self, n_in: int, non_lin: bool = True) -> None:
         self.w = [Value(random.uniform(-1, 1)) for _ in range(n_in)]  # noqa: S311
         self.b = Value(random.uniform(-1, 1))  # noqa: S311
+        self.non_lin = non_lin
 
     def __call__(self, x: list[int | Value]) -> Value:
         """__call__ implementation for Neuron objects."""
@@ -16,7 +18,7 @@ class Neuron:
             raise ValueError(f"Expected input of length {len(self.w)}, got {len(x)}.")
 
         activation = sum((xi * wi for xi, wi in zip(self.w, x, strict=False)), self.b)
-        return activation.tanh()
+        return activation.tanh() if self.non_lin else activation
 
     def __repr__(self) -> str:
         """__repr__ implementation for Neuron objects."""
