@@ -140,6 +140,7 @@ y = [1, -1, -1, 1]
 y_pred = [m1(x) for x in xs]
 print(y_pred)
 
+# mean squared error
 loss = sum((yout - ygt)**2 for yout, ygt in zip(y_pred, y))
 print(loss)
 
