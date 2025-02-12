@@ -14,7 +14,7 @@ from src.neuron import Neuron, Layer, MLP
 
 # M.backward()
 
-# visualize_graph(M, filename="viz4")
+# visualize_graph(M, filename="viz2")
 
 
 # simple 2-input neuron visualization
@@ -255,3 +255,4 @@ plt.xlim(xx.min(), xx.max())
 plt.ylim(yy.min(), yy.max())
 
 plt.savefig("./visualizations/sample_plot.png")
+

@@ -139,22 +139,28 @@ class Value:
         return result
 
     def backward(self) -> None:
-        """Perform a backward pass through the Value object and all its children."""
-        self.grad = 1.0
+        """Start the backward pass from a root node."""
+        # 1 build a ordered list of all children nodes.
+        # 2 iterate thru that list and execute ._backward() on each node
+        self.grad = 1
         visited = set()
-        topo = []
+        ordered = []
 
-        def build_topo(node: "Value") -> None:
-            if node not in visited:
-                visited.add(node)
+        def build_ordered(node: "Value") -> None:
+            if node in visited:
+                return
+
+            if node.prev:
                 for child in node.prev:
-                    build_topo(child)
-                topo.append(node)
+                    build_ordered(child)
 
-        build_topo(self)
+            visited.add(node)
+            ordered.append(node)
 
-        for node in reversed(topo):
-            node._backward()  # type: ignore[no-untyped-call]  # noqa: SLF001
+        build_ordered(self)
+
+        for node in reversed(ordered):
+            node._backward()  # type: ignore[no-untyped-call]
 
     def __eq__(self, other_value: object) -> bool:
         """Check equality of two Value objects."""
